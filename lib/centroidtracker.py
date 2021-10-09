@@ -54,3 +54,24 @@ class CentroidTracker():
         if len(self.objects) == 0:
             for i in range(0, len(inputCentroids)):
                 self.register(inputCentroids[i])
+
+        # otherwise, we are currently tracking objects so we need to
+		# try to match the input centroids to existing object centroids
+        else:
+            # grab the set of object IDs and corresponding centroids
+            objectIDs = list(self.objects.keys())
+            objectCentroids = list(self.objects.value())
+
+            # compute the distance between each pair of object centroids and input centroids resp.
+            # our goal will be to match an input centroud to an existing object centroid
+            D = dist.cdist(np.array(objectCentroids), inputCentroids)
+
+            # in order to perform this matching we must:
+            # 1. Find the smallest value in each row and 
+            # 2. Sort the row indexes based on their minimum values so that 
+            # the row with the msallest value at the *front* of the index list
+            rows = D.min(axis=1).argsort()
+
+            # then we perform a similar process on the columns by finding the smallest value in each column and 
+            # then sorting using the previously computed row index list
+            cols = D.argmin(axis=1)[rows]
