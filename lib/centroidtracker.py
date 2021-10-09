@@ -4,7 +4,7 @@ import numpy as np
 class CentroidTracker():
     def __init__(self,maxDisappeared=50, maxDistance=50):
         # initialize next unique object ID along with 2 ordered dicts to
-        # 1. Keep track of mapping a given object ID to its centroid(key:ObjectID,value:centroid co-ordinates)
+        # 1. Keep track of mapping a given object ID to its centroid (key: ObjectID, value: centroid co-ordinates)
         # 2. No. of consecutive frames a particular object ID (key) has been marked as “lost”
         self.nextObjectID = 0
         self.objects = {}
@@ -34,8 +34,23 @@ class CentroidTracker():
             for objectID in list(self.disappeared.keys()):
                 self.disappeared[objectID] += 1
                 # if we have reached a maximum number of consecutive frames where a given object
-                # has been as missing, deregister it
+                # has been marked as missing, deregister it
                 if self.disappeared[objectID] > self.maxDisappeared:
                     self.deregister(objectID)
             # return early as there are no centroids or tracking information to update
             return self.objects
+        
+        # initialize an array of input centroids for the current frame
+        inputCentroids = np.zeros((len(rects),2), dtype='int')
+
+        # loop over the bounding box rectangles
+        for(i,(startX, startY, endX, endY)) in enumerate(rects):
+            # use the bounding box coordinates to derive the centroid
+            cX = int((startX + endX) / 2.0)
+            cY = int((startY + endY) / 2.0)
+            inputCentroids[i] = (cX, cY)
+
+        # if not tracking any objects then take the input centroids and register each of them
+        if len(self.objects) == 0:
+            for i in range(0, len(inputCentroids)):
+                self.register(inputCentroids[i])
