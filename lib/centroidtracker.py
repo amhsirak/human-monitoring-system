@@ -94,7 +94,7 @@ class CentroidTracker():
                     continue
 
                 # otherwise grab the object ID for the current row, set its new centroids
-                # and rset the disappeared counter
+                # and reset the disappeared counter
                 objectID = objectIDs[row]
                 self.objects[objectID] = inputCentroids[col]
                 self.disappeared[objectID] = 0
@@ -135,5 +135,3 @@ class CentroidTracker():
 		# return the set of trackable objects
 		return self.objects
             
-
-
