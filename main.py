@@ -1,5 +1,6 @@
 from lib.centroidtracker import CentroidTracker
 from lib.trackableobject import TrackableObject
+from lib import config
 from imutils.video import VideoStream
 from imutils.video import FPS
 import argparse, imutils
@@ -26,3 +27,36 @@ def run():
     # load our serialized model from disk
     print('[INFO] loading model...')
     net = cv2.dnn.readNetFromCaffe(args['prototxt'], args['model'])
+
+    # if video path is not supplied, use IP/Webcam
+    if not args.get('input', False):
+        print('[INFO] STarting the live stream...')
+        vs = VideoStream(config.url).start()
+        time.sleep(2.0)
+    else:
+        print('[INFO] Starting the video...')
+        vs = cv2.VideoCapture(args['input'])
+    
+    # initialise the video writer (instantiate later)
+    writer = None
+
+    # initialize the frame dimensions (we'll set them as soon as we read
+	# the first frame from the video)
+    W = None
+    H = None 
+
+    # instantiate our centroid tracker, then initialise a list 
+    # to store each of our dlib correlation trackers, followed by a dict to
+    # map each unique object ID to a TrackableObject
+    ct = CentroidTracker(maxDisappeared=40, maxDistance=50)
+    trackers = []
+    trackableObjects = {}
+
+    # initialise the total number of frames processed thus far, along with 
+    # the total no. of objects that have moved either up or down
+    totalFrames = 0
+    totalDown = 0
+    totalUp = 0
+
+    # start the frames per second throughput estimator
+    fps = FPS().start()
