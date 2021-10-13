@@ -57,6 +57,36 @@ def run():
     totalFrames = 0
     totalDown = 0
     totalUp = 0
+    x = []
+    empty = []
+    empty1 = []
 
     # start the frames per second throughput estimator
     fps = FPS().start()
+
+    # loop over incoming frames from the video stream
+    while True:
+        # grab the next frame and handle if we are reading from
+        # either VideoCapture or VideoStrean
+        frame = vs.read()
+        frame = frame[1] if args.get('input', False) else frame
+
+        # if we are viewing a video and we did not grab a frame
+        # then we have reached end of the video
+        if args['input'] is not None and frame is None: 
+            break
+
+        # resize the frame to have a max width of 500px(the less 
+        # data we have, the faster we can process it), then
+        # convert the frame from BGR to RGB for dlib
+        frame = imutils.resize(frame,width=500)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # of the frame dimensions are empty, set them
+        if W is None or H is None:
+            (H, W) = frame.shape[:2]
+
+        # if we are supposed to be writing a video to disk, initialize the writer
+        if args['output'] is not None and writer is None:
+            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+            writer = cv2.VideoWriter(args['output'], fourcc, 30, (W,H), True)
