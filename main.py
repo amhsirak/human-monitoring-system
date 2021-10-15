@@ -37,7 +37,7 @@ def run():
         print('[INFO] Starting the video...')
         vs = cv2.VideoCapture(args['input'])
     
-    # initialise the video writer (instantiate later)
+    # initialise the video writer
     writer = None
 
     # initialize the frame dimensions (we'll set them as soon as we read
@@ -46,7 +46,7 @@ def run():
     H = None 
 
     # instantiate our centroid tracker, then initialise a list 
-    # to store each of our dlib correlation trackers, followed by a dict to
+    # to store each of our dlib correlation trackers, and a dict to
     # map each unique object ID to a TrackableObject
     ct = CentroidTracker(maxDisappeared=40, maxDistance=50)
     trackers = []
@@ -67,7 +67,7 @@ def run():
     # loop over incoming frames from the video stream
     while True:
         # grab the next frame and handle if we are reading from
-        # either VideoCapture or VideoStrean
+        # either VideoCapture or VideoStream
         frame = vs.read()
         frame = frame[1] if args.get('input', False) else frame
 
@@ -82,7 +82,7 @@ def run():
         frame = imutils.resize(frame,width=500)
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # of the frame dimensions are empty, set them
+        # if the frame dimensions are empty, set them
         if W is None or H is None:
             (H, W) = frame.shape[:2]
 
@@ -90,3 +90,22 @@ def run():
         if args['output'] is not None and writer is None:
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
             writer = cv2.VideoWriter(args['output'], fourcc, 30, (W,H), True)
+
+        # initialize the current status along with our list of
+        # bounding box rects returned by either
+        # 1. Our object detector or 2. Correlation trackers
+        status = 'Waiting'
+        rects = []
+
+        # check to see if we should run a more computionally expensive
+        # object detection method to aid our tracker
+        if totalFrames % args['skip_frames'] == 0:
+            # set the status and initialize our new set of object trackers
+            status = 'Detecting'
+            trackers = []
+
+            # convert the frame to a blob and pass the blob through the 
+            # network and obtain the detections
+            blob = cv2.dnn.blobFromImage(frame, 0.007843, (W,H), 127.5)
+            net.setInput(blob)
+            detections = net.foward()
