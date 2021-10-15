@@ -91,8 +91,7 @@ def run():
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
             writer = cv2.VideoWriter(args['output'], fourcc, 30, (W,H), True)
 
-        # initialize the current status along with our list of
-        # bounding box rects returned by either
+        # initialize the current status along with our list of bounding box rects returned by either
         # 1. Our object detector or 2. Correlation trackers
         status = 'Waiting'
         rects = []
@@ -109,3 +108,17 @@ def run():
             blob = cv2.dnn.blobFromImage(frame, 0.007843, (W,H), 127.5)
             net.setInput(blob)
             detections = net.foward()
+
+        # loop over detections
+        for i in np.arange(0, detections.shape[2]):
+            # extract the confidence (probability) associated with the prediction
+            confidence = detections[0, 0, i, 2]
+
+            # filter out weak detections by requiring a min confidence
+            if confidence > args['confidence']:
+                # extract the index of the class label from the detections list
+                idx = int(detections[0, 0, i, 1])
+
+                # if the class label is not a person, ignore it 
+                if CLASSES[idx] != 'person':
+                    continue
