@@ -13,16 +13,25 @@ t0 = time.time()
 
 def run():
     ap = argparse.ArgumentParser()
-    ap.add_argument('-p', 'prototxt', required=True, help='Path to Caffe deploy prototxt file')
-    ap.add_argument('-m', '--model', required=True, help='Path to Caffe pre-trained model')
-    ap.add_argument('-i', '--input', type=str, help='Path to optional input video file')
-    ap.add_argument('-o', '--ouput', type=str, help='Path to optional output video file')
-    ap.add_argument('-c', '--confidence', type=float, default=0.4, help='Minimum probability to filter weak detections')
-    ap.add_argument('-s', '--skip-frames', type=int, default=30, help='# of skip frames between detections')
+    ap.add_argument('-p', 'prototxt', required=True, 
+    help='Path to Caffe deploy prototxt file')
+    ap.add_argument('-m', '--model', required=True, 
+    help='Path to Caffe pre-trained model')
+    ap.add_argument('-i', '--input', type=str, 
+    help='Path to optional input video file')
+    ap.add_argument('-o', '--ouput', type=str, 
+    help='Path to optional output video file')
+    ap.add_argument('-c', '--confidence', type=float, default=0.4, 
+    help='Minimum probability to filter weak detections')
+    ap.add_argument('-s', '--skip-frames', type=int, default=30, 
+    help='# of skip frames between detections')
     args = vars(ap.parse_args())
 
     # classes the model was trained to detect
-    CLASSES = ['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep','sofa', 'train', 'tvmonitor']
+    CLASSES = ['background', 'aeroplane', 'bicycle', 'bird', 'boat', 
+    'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 
+    'dog', 'horse', 'motorbike', 'person', 'pottedplant', 
+    'sheep','sofa', 'train', 'tvmonitor']
 
     # load our serialized model from disk
     print('[INFO] loading model...')
@@ -30,7 +39,7 @@ def run():
 
     # if video path is not supplied, use IP/Webcam
     if not args.get('input', False):
-        print('[INFO] STarting the live stream...')
+        print('[INFO] Starting the live stream...')
         vs = VideoStream(config.url).start()
         time.sleep(2.0)
     else:
@@ -76,22 +85,23 @@ def run():
         if args['input'] is not None and frame is None: 
             break
 
-        # resize the frame to have a max width of 500px(the less 
+        # resize the frame to have a max width of 400px(the less 
         # data we have, the faster we can process it), then
         # convert the frame from BGR to RGB for dlib
-        frame = imutils.resize(frame,width=500)
+        frame = imutils.resize(frame,width=400)
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # if the frame dimensions are empty, set them
         if W is None or H is None:
             (H, W) = frame.shape[:2]
 
-        # if we are supposed to be writing a video to disk, initialize the writer
+        # if we're supposed to be writing a video to disk, initialize the writer
         if args['output'] is not None and writer is None:
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
             writer = cv2.VideoWriter(args['output'], fourcc, 30, (W,H), True)
 
-        # initialize the current status along with our list of bounding box rects returned by either
+        # initialize the current status along with our list of 
+        # bounding box rects returned by either
         # 1. Our object detector or 2. Correlation trackers
         status = 'Waiting'
         rects = []
