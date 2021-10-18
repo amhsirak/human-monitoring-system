@@ -132,3 +132,40 @@ def run():
                 # if the class label is not a person, ignore it 
                 if CLASSES[idx] != 'person':
                     continue
+
+                # compute the (x,y) coordinates of the bounding box
+                # for the object
+                box = detections[0, 0, i, 3:7] * np.array([W, H, W, H])
+                (startX, startY, endX, endY) = box.astype('int')
+
+                # construct a dblib rectangle object from the bounding box coordinates
+                # and then start the dlib correlation tracker
+                tracker = dlib.correlation_tracker()
+                rect = dlib.rectangle(startX, startY, endX, endY)
+                tracker.start_track(rgb, rect)
+
+                # add the tracker to our list of trackers so we can
+                # utilize it during skip frames
+                trackers.append(tracker)
+
+        # otherwise, we should utilize our object *trackers* rather than
+	    # object *detectors* to obtain a higher frame processing throughput
+        else: 
+            # loop over trackers
+            for tracker in trackers:
+                # set the status of our system to be tracking
+                # rather than of waiting/detecting
+                status = 'Tracking'
+
+                # update the tracker and grab the updated position
+                tracker.update(rgb)
+                pos = tracker.get_position()
+
+                # unpack the position object
+                startX = int(pos.left())
+                startY = int(pos.top())
+                endX = int(pos.right())
+                endY = int(pos.bottom())
+
+                # add the bounding box coordinates to the rectangles list
+                rects.append((startX, startY, endX, endY))
