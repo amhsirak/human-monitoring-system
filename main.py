@@ -178,6 +178,44 @@ def run():
 			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
         
         # use the centroid tracker to associate the
-        # 1. Old object centroids
+        # 1. Old object centroids with
         # 2. Newly computed object centroids
         objects = ct.update(rects)
+
+        # loop over tracked objects
+        for (objectID, centroid) in objects.items():
+            # check to see if a trackable object exists for the current object ID
+            trackObj = trackableObjects.get(objectID, None)
+
+            # if there is no existing trackable object, create one
+            if trackObj is None:
+                trackObj = TrackableObject(objectID, centroid)
+            # otherwise there is a trackable object which can be used to determine direction
+            else:
+                # the difference between the y-coordinate of the *current*
+				# centroid and the mean of *previous* centroids will tell
+				# us in which direction the object is moving (negative for
+				# 'up' and positive for 'down')
+                y = [c[1] for c in trackObj.centroids]
+                direction = centroid[1] - np.mean(y)
+                trackObj.centroids.append(centroid)
+
+                # check if the object has been counted or not
+                if not trackObj.counted:
+                    # if the direction is negative (indicating the object
+                    # is moving up) AND the centroid is above the center line,
+                    # count the object
+                    if direction < 0 and centroid[1] < H // 2:
+                        totalUp += 1
+                        empty.append(totalUp)
+                        trackObj.counted = True
+
+                    # if the direction is positive(indicating the object
+                    # is movng down) AND the centroid is below the center line
+                    # count the object
+                    elif direction > 0 and centroid[1] > H // 2:
+                        totalDown += 1
+                        empty1.append(totalDown)
+                        # if the people limit exceeds over threshold, send an email
+
+                        trackObj.counted = True
