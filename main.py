@@ -80,15 +80,15 @@ def run():
         frame = vs.read()
         frame = frame[1] if args.get('input', False) else frame
 
-        # if we are viewing a video and we did not grab a frame
+        # if we are viewing a video and did not grab a frame
         # then we have reached end of the video
         if args['input'] is not None and frame is None: 
             break
 
-        # resize the frame to have a max width of 400px(the less 
+        # resize the frame to have a max width of 500px(the less 
         # data we have, the faster we can process it), then
         # convert the frame from BGR to RGB for dlib
-        frame = imutils.resize(frame,width=400)
+        frame = imutils.resize(frame,width=500)
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # if the frame dimensions are empty, set them
@@ -138,7 +138,7 @@ def run():
                 box = detections[0, 0, i, 3:7] * np.array([W, H, W, H])
                 (startX, startY, endX, endY) = box.astype('int')
 
-                # construct a dblib rectangle object from the bounding box coordinates
+                # construct a dlib rectangle object from the bounding box coordinates
                 # and then start the dlib correlation tracker
                 tracker = dlib.correlation_tracker()
                 rect = dlib.rectangle(startX, startY, endX, endY)
@@ -169,3 +169,15 @@ def run():
 
                 # add the bounding box coordinates to the rectangles list
                 rects.append((startX, startY, endX, endY))
+
+        # draw a horizontal line in the center of the frame -- once an
+		# object crosses this line we will determine whether they were
+		# moving 'up' or 'down'
+		cv2.line(frame, (0, H // 2), (W, H // 2), (0, 0, 0), 3)
+		cv2.putText(frame, "-Prediction border-Entrance-", (10, H - ((i * 20) + 200)),
+			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+        
+        # use the centroid tracker to associate the
+        # 1. Old object centroids
+        # 2. Newly computed object centroids
+        objects = ct.update(rects)
