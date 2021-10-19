@@ -1,6 +1,7 @@
 from lib.centroidtracker import CentroidTracker
 from lib.trackableobject import TrackableObject
-from lib import config
+from lib import config, threading
+from lib.mailer import Mailer
 from imutils.video import VideoStream
 from imutils.video import FPS
 import argparse, imutils
@@ -67,8 +68,8 @@ def run():
     totalDown = 0
     totalUp = 0
     x = []
-    empty = []
-    empty1 = []
+    emptyUp = []
+    emptyDown = []
 
     # start the frames per second throughput estimator
     fps = FPS().start()
@@ -203,19 +204,31 @@ def run():
                 # check if the object has been counted or not
                 if not trackObj.counted:
                     # if the direction is negative (indicating the object
-                    # is moving up) AND the centroid is above the center line,
+                    # is moving UP) AND the centroid is above the center line,
                     # count the object
                     if direction < 0 and centroid[1] < H // 2:
                         totalUp += 1
-                        empty.append(totalUp)
+                        emptyUp.append(totalUp)
                         trackObj.counted = True
 
                     # if the direction is positive(indicating the object
-                    # is movng down) AND the centroid is below the center line
+                    # is movng DOWN) AND the centroid is below the center line
                     # count the object
                     elif direction > 0 and centroid[1] > H // 2:
                         totalDown += 1
-                        empty1.append(totalDown)
+                        emptyDown.append(totalDown)
                         # if the people limit exceeds over threshold, send an email
+                        if sum(x) >= config.Threshold:
+                            cv2.putText(frame, 'ALERT-People Limit Exceeded!',(10, frame.shape[0] - 80), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 255), 2)
+                            if config.ALERT:
+                                print('[INFO] Sending an email alert...')
+                                Mailer().send(config.MAIL)
+                                print('[INFO] Alert sent successfully.')
 
                         trackObj.counted = True
+                    x = []
+                    # compute the sum of total people inside
+                    x.append(len(emptyDown) - len(emptyUp))
+
+            # store the trackable object in our dictionary
+            trackableObjects[objectID] = trackObj
