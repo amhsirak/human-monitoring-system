@@ -219,7 +219,8 @@ def run():
                         emptyDown.append(totalDown)
                         # if the people limit exceeds over threshold, send an email
                         if sum(x) >= config.Threshold:
-                            cv2.putText(frame, 'ALERT-People Limit Exceeded!',(10, frame.shape[0] - 80), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 255), 2)
+                            cv2.putText(frame, 'ALERT-People Limit Exceeded!',
+                            (10, frame.shape[0] - 80), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 255), 2)
                             if config.ALERT:
                                 print('[INFO] Sending an email alert...')
                                 Mailer().send(config.MAIL)
@@ -232,3 +233,71 @@ def run():
 
             # store the trackable object in our dictionary
             trackableObjects[objectID] = trackObj
+
+            # draw 1. ID of the object 2. Centroid of the object 
+            # on the output frame
+            text = 'ID {}'.format(objectID)
+            cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10), 
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+            cv2.circle(frame, (centroid[0], centroid[1]), 4, (255, 255, 255), -1)
+
+            # construct a typle of information to be displayed on the frame
+            info = [
+                ('Exit', totalUp),
+                ('Enter', totalDown),
+                ('Status', status),
+            ]
+
+            countInfo = [
+                ('Total People Inside', x),
+            ]
+            
+        # Display the output
+        for (i, (k, v)) in enumerate(info):
+            text = "{}: {}".format(k, v)
+            cv2.putText(frame, text, (10, H - ((i * 20) + 20)), 
+            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2)
+
+        for (i, (k, v)) in enumerate(countInfo):
+            text = "{}: {}".format(k, v)
+            cv2.putText(frame, text, (265, H - ((i * 20) + 60)), 
+            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+        
+        # initiate a simple log to save data at end of the day
+        if config.Log:
+            dateTime = [datetime.datetime.now()]
+            datee = [dateTime, emptyDown, emptyUp, x]
+            export_data = zip_longest(*datee, fillvalue='')
+
+            with open('Log.csv', 'w', newline='') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+                wr.writerow(('End Time', 'In', 'Out', 'Total Inside'))
+                wr.writerows(export_data)
+            
+        # check to see if we should write the frame to disk
+        if writer is not None:
+            writer.write(frame)
+
+        # show the output frame
+        cv2.imshow('Real-Time Human Monitoring', frame)
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord('q'):
+            break
+
+        # increment the total number of frames processed thus far and
+		# then update the FPS counter
+        totalFrames += 1
+        fps.update()
+
+        if config.Timer:
+			# Automatic timer to stop the live stream. Set to 8 hours (28800s).
+            t1 = time.time()
+            num_seconds=(t1-t0)
+            if num_seconds > 28800:
+                break
+    
+    # stop the timer and display FPS information
+	fps.stop()
+	print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
+	print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
