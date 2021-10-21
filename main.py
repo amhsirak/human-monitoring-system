@@ -189,9 +189,9 @@ def run():
 		# draw a horizontal line in the center of the frame -- once an
 		# object crosses this line we will determine whether they were
 		# moving 'up' or 'down'
-		cv2.line(frame, (0, H // 2), (W, H // 2), (3, 252, 240), 3)
+		cv2.line(frame, (0, H // 2), (W, H // 2), (255,255,255), 2)
 		cv2.putText(frame, 'Prediction Border(Entrance)', (10, H - ((i * 20) + 200)),
-			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (3, 252, 240), 2)
+			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1)
 
 		# use the centroid tracker to associate the (1) old object
 		# centroids with (2) the newly computed object centroids
@@ -268,7 +268,7 @@ def run():
 		]
 
 		info2 = [
-		('Total People Inside', x),
+		('Total People Inside',x),
 		]
 
         # Display the output
@@ -278,7 +278,7 @@ def run():
 
 		for (i, (k, v)) in enumerate(info2):
 			text = '{}: {}'.format(k, v)
-			cv2.putText(frame, text, (265, H - ((i * 20) + 60)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (3, 252, 32), 2)
+			cv2.putText(frame, text, (255, H - ((i * 20) + 60)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (3, 252, 32), 2)
 
 		# Initiate a simple log to save data at end of the day
 		if config.Log:
