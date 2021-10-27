@@ -1,3 +1,5 @@
+# Author: Karishma Shukla
+
 import argparse, imutils
 from lib.centroidtracker import CentroidTracker
 from lib.trackableobject import TrackableObject
@@ -274,11 +276,11 @@ def run():
         # Display the output
 		for (i, (k, v)) in enumerate(info):
 			text = '{}: {}'.format(k, v)
-			cv2.putText(frame, text, (10, H - ((i * 20) + 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (3, 252, 32), 2)
+			cv2.putText(frame, text, (10, H - ((i * 20) + 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,0), 2)
 
 		for (i, (k, v)) in enumerate(info2):
 			text = '{}: {}'.format(k, v)
-			cv2.putText(frame, text, (255, H - ((i * 20) + 60)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (3, 252, 32), 2)
+			cv2.putText(frame, text, (255, H - ((i * 20) + 60)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,0), 2)
 
 		# Initiate a simple log to save data at end of the day
 		if config.Log:
@@ -298,7 +300,7 @@ def run():
 		# show the output frame
 		cv2.imshow('Real-Time Human Monitoring', frame)
 		key = cv2.waitKey(1) & 0xFF
-		if key == ord('q'):
+		if key == ord('q')
 			break
 
 		# increment the total number of frames processed thus far and
@@ -325,9 +327,9 @@ def run():
 
 
 if config.Scheduler:
-	#Example: schedule.every(5).seconds.do(run)
+	# Example: schedule.every(5).seconds.do(run)
     # ^^^^ Runs for every 5 second ^^^^
-	#Runs at every day (9:00 am). Can be changed.
+	# Runs at every day (9:00 am). Can be changed.
 	schedule.every().day.at('9:00').do(run)
 	while 1:
 		schedule.run_pending()

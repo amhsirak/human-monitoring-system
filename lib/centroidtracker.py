@@ -1,3 +1,5 @@
+# Author: Karishma Shukla
+
 from scipy.spatial import distance as dist
 import numpy as np
 
