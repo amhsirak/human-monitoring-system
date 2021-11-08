@@ -1,9 +1,11 @@
 import smtplib
 
+from lib.creds import EMAIL, PASSWORD
+
 class Mailer:
     def __init__(self):
-        self.EMAIL = ''
-        self.PASS = ""
+        self.EMAIL = EMAIL
+        self.PASS = PASSWORD
         self.PORT = 465
         self.server = smtplib.SMTP_SSL('smtp.gmail.com', self.PORT)
 

@@ -73,8 +73,8 @@ def run():
 	totalDown = 0
 	totalUp = 0
 	x = []
-	empty=[]
-	empty1=[]
+	emptyEntry=[]
+	emptyExit=[]
 
 	# start the frames per second throughput estimator
 	fps = FPS().start()
@@ -209,6 +209,38 @@ def run():
 				direction = centroid[1] - np.mean(y)
 				to.centroids.append(centroid)
 
+					# check to see if the object has been counted or not
+				if not to.counted:
+					# if the direction is negative (indicating the object
+					# is moving up) AND the centroid is above the center
+					# line, count the object
+					if direction < 0 and centroid[1] < H // 2:
+						totalUp += 1
+						emptyExit.append(totalUp)
+						to.counted = True
+
+					# if the direction is positive (indicating the object
+					# is moving down) AND the centroid is below the
+					# center line, count the object
+					elif direction > 0 and centroid[1] > H // 2:
+						totalDown += 1
+						emptyEntry.append(totalDown)
+						#print(empty1[-1])
+						# if the people limit exceeds over threshold, send an email alert
+						if sum(x) >= config.Threshold:
+							cv2.putText(frame, 'ALERT-People limit exceeded!', (10, frame.shape[0] - 80),
+								cv2.FONT_HERSHEY_COMPLEX, 0.5, (3, 252, 32), 2)
+							if config.ALERT:
+								print('[INFO] Sending email alert..')
+								Mailer().send(config.MAIL)
+								print('[INFO] Alert sent.')
+
+						to.counted = True
+						
+					x = []
+					# compute the sum of total people inside
+					x.append(len(emptyEntry)-len(emptyExit))
+
 			# store the trackable object in our dictionary
 			trackableObjects[objectID] = to
 
@@ -223,6 +255,10 @@ def run():
 		info = [
 		("Status", status),
 		]
+		info2 = [
+		('Total People Inside',x),
+		]
+		
         # Display the output
 		for (i, (k, v)) in enumerate(info):
 			text = "{}: {}".format(k, v)
@@ -231,7 +267,7 @@ def run():
 		# Initiate a simple log to save data at end of the day
 		if config.Log:
 			datetimee = [datetime.datetime.now()]
-			d = [datetimee, empty1, empty, x]
+			d = [datetimee, emptyEntry, emptyExit, x]
 			export_data = zip_longest(*d, fillvalue = '')
 
 			with open('Log.csv', 'w', newline='') as myfile:
@@ -268,16 +304,6 @@ def run():
 	print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
 	print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-
-	# # if we are not using a video file, stop the camera video stream
-	# if not args.get("input", False):
-	# 	vs.stop()
-	#
-	# # otherwise, release the video file pointer
-	# else:
-	# 	vs.release()
-	
-	# issue 15
 	if config.Thread:
 		vs.release()
 

@@ -1,5 +1,3 @@
-# Author: Karishma Shukla
-
 import argparse, imutils
 from lib.centroidtracker import CentroidTracker
 from lib.trackableobject import TrackableObject
@@ -45,13 +43,13 @@ def run():
 
 	# if a video path was not supplied, grab a reference to the ip camera
 	if not args.get('input', False):
-		print('[INFO] Starting the live stream..')
+		print('[INFO] Starting the live stream...')
 		vs = VideoStream(config.url).start()
 		time.sleep(2.0)
 
 	# otherwise, grab a reference to the video file
 	else:
-		print('[INFO] Starting the video..')
+		print('[INFO] Starting the video...')
 		vs = cv2.VideoCapture(args['input'])
 
 	# initialize the video writer (we'll instantiate later if need be)
@@ -300,7 +298,7 @@ def run():
 		# show the output frame
 		cv2.imshow('Real-Time Human Monitoring', frame)
 		key = cv2.waitKey(1) & 0xFF
-		if key == ord('q')
+		if key == ord('q'):
 			break
 
 		# increment the total number of frames processed thus far and
