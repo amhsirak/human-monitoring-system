@@ -1,8 +1,26 @@
 # Human Monitoring System
 Real-time human detection, tracking and counting using MobileNet SSD and Centroid Tracking.
 
+- **Use case:** Counting the number of people in stores/buildings/shopping malls etc., in real-time.
+- Sending an alert to the staff if the people are way over the limit.
+- Automating features and optimising real-time stream for better performance (with threading).
+- Acts as a measure towards footfall analysis.
 
-## How To Run and Use
+
+## Results
+
+https://user-images.githubusercontent.com/76456498/142620964-ffb4eedf-88a5-4afe-b24c-aa2ffd07a0fc.mp4
+
+### Email Alert
+
+<img width="800" alt="email" src="https://user-images.githubusercontent.com/76456498/142621909-ba6f3c3e-1eb5-45dd-94f9-533971b19945.jpg">
+
+### Simple Log
+
+<img width="600" alt="log" src="https://user-images.githubusercontent.com/76456498/142622300-ade7ae35-5004-4d16-bd78-976e68a24531.png">
+
+
+## How To Use
 
 - Install all dependencies
 ```
@@ -51,6 +69,14 @@ python run.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobi
     <td>--skip-frames</td>
     <td># of skip frames between detections</td>
   </tr>
+  </table>
+  
+  *Additional Features*
+  <table>
+  <tr>
+     <td>Argument</td>
+     <td>Help</td>
+  </tr>
   <tr>
     <td>--log</td>
     <td>Simple log to log the counting of people</td>
@@ -77,7 +103,16 @@ python run.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobi
   </tr>
  </table>
  
- ## References
+## References
 - SSD paper: https://arxiv.org/abs/1512.02325
 - MobileNet paper: https://arxiv.org/abs/1704.04861
 - Centroid tracker: https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/
+
+## Run On Your Local Machine
+- Fork the repository
+- Clone the repository 
+```
+git clone https://github.com/karishmashuklaa/human-monitoring-system.git
+```
+
+Have fun! 🦄
