@@ -8,7 +8,13 @@ Real-time human detection, tracking and counting using MobileNet SSD and Centroi
 
 ## Results
 
-https://user-images.githubusercontent.com/76456498/142688189-09d1e6ad-5832-44d3-a082-6eb7645df4aa.mp4
+<details>
+  <summary>Click to expand and see the result video! 🛩️</summary>
+  
+  https://user-images.githubusercontent.com/76456498/142688189-09d1e6ad-5832-44d3-a082-6eb7645df4aa.mp4
+  
+  
+</details>
 
 ### Email Alert
 
@@ -114,4 +120,4 @@ python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mob
 git clone https://github.com/karishmashuklaa/human-monitoring-system.git
 ```
 
-Have fun! 🦄
+🦄🦄🦄🦄🦄
