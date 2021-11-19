@@ -6,18 +6,17 @@ Real-time human detection, tracking and counting using MobileNet SSD and Centroi
 - Automating features and optimising real-time stream for better performance (with threading).
 - Acts as a measure towards footfall analysis.
 
-
 ## Results
 
-https://user-images.githubusercontent.com/76456498/142620964-ffb4eedf-88a5-4afe-b24c-aa2ffd07a0fc.mp4
+https://user-images.githubusercontent.com/76456498/142688189-09d1e6ad-5832-44d3-a082-6eb7645df4aa.mp4
 
 ### Email Alert
 
-<img width="800" alt="email" src="https://user-images.githubusercontent.com/76456498/142621909-ba6f3c3e-1eb5-45dd-94f9-533971b19945.jpg">
+<img width="600" alt="email" src="https://user-images.githubusercontent.com/76456498/142621909-ba6f3c3e-1eb5-45dd-94f9-533971b19945.jpg">
 
 ### Simple Log
 
-<img width="600" alt="log" src="https://user-images.githubusercontent.com/76456498/142622300-ade7ae35-5004-4d16-bd78-976e68a24531.png">
+<img width="400" alt="log" src="https://user-images.githubusercontent.com/76456498/142622300-ade7ae35-5004-4d16-bd78-976e68a24531.png">
 
 
 ## How To Use
@@ -29,13 +28,13 @@ pip install -r requirements.txt
 
 - To run on a test video file
 ```
-python run.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input videos/example.mp4
+python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input videos/example.mp4
 ```
 - To run on IP camera / Web camera
 
 For web camera, set `url = 0`
 ```
-python run.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel
+python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel
 ```
 
 ### ⚡ The entire software runs through CLI and the following arguments can be passed
@@ -79,7 +78,7 @@ python run.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobi
   </tr>
   <tr>
     <td>--log</td>
-    <td>Simple log to log the counting of people</td>
+    <td>Simple log to log the counting of people in a CSV file</td>
   </tr>
   <tr>
     <td>--alert</td>
