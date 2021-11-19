@@ -5,6 +5,7 @@ Real-time human detection, tracking and counting using MobileNet SSD and Centroi
 - Sending an alert to the staff if the people are way over the limit.
 - Automating features and optimising real-time stream for better performance (with threading).
 - Acts as a measure towards footfall analysis.
+- Compatible with IP cameras and Web cameras.
 
 ## Results
 
