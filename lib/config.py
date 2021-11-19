@@ -3,7 +3,7 @@ MAIL = 'carishmashukla28@gmail.com'
 
 # Enter IP camera url (Eg: url = 'http://191.138.0.100:8040/video'). 
 # Set to 0 for webcam.
-url = ''
+url = 0
 
 # ON/OFF for mail feature. Enter True to turn on the email alert feature.
 ALERT = True
@@ -17,8 +17,10 @@ Thread = False
 # Simple log to log the counting of people
 Log = False
 
-# Auto run/Schedule the software to run at your desired time
+# Auto run/Schedule the software to run at any desired time
 Scheduler = False
+SCHEDULING_TIME = '09:18'
 
-# Auto stop the software after certain a time/hours
+# Auto stop the software after certain time
 Timer = False
+TIMER_TIME = 28800

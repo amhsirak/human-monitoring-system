@@ -24,11 +24,18 @@ def run():
 		help='path to optional input video file')
 	ap.add_argument('-o', '--output', type=str,
 		help='path to optional output video file')
-	# confidence default 0.4
 	ap.add_argument('-c', '--confidence', type=float, default=0.4,
 		help='minimum probability to filter weak detections')
 	ap.add_argument('-s', '--skip-frames', type=int, default=30,
 		help='# of skip frames between detections')
+	
+	# Other features
+	ap.add_argument('-l', '--log', type=bool, default=False, help='Simple log to log the counting of people')
+	ap.add_argument('-a', '--alert', type=bool, default=False, help='Enter True to turn on the email alert feature')
+	ap.add_argument('-thresh', '--threshold', type=int, default=3, help='Set the limit for maximum people inside')
+	ap.add_argument('-th', '--threading', type=bool, default=False, help='Turn threading on/off')
+	ap.add_argument('-t', '--timer', type=bool, default=False, help='Auto stop the software after certain time')
+	ap.add_argument('-tym', '--time', type=float, default=28800, help='Seconds after which the software must be auto stopped')
 	args = vars(ap.parse_args())
 
 	# initialize the list of class labels MobileNet SSD was trained to
@@ -79,7 +86,7 @@ def run():
 	# start the frames per second throughput estimator
 	fps = FPS().start()
 
-	if config.Thread:
+	if args['threading'] == True:
 		vs = thread.ThreadingClass(config.url)
 
 	# loop over frames from the video stream
@@ -234,13 +241,13 @@ def run():
 					elif direction > 0 and centroid[1] > H // 2:
 						totalDown += 1
 						emptyEntry.append(totalDown)
-						#print(empty1[-1])
+						
 						# if the people limit exceeds over threshold, send an email alert
-						if sum(x) >= config.Threshold:
+						if sum(x) >= args['threshold']:
 							cv2.putText(frame, 'ALERT-People limit exceeded!', (10, frame.shape[0] - 80),
 								cv2.FONT_HERSHEY_COMPLEX, 0.5, (3, 252, 32), 2)
-							if config.ALERT:
-								print('[INFO] Sending email alert..')
+							if args['alert'] == True:
+								print('[INFO] Sending email alert...')
 								Mailer().send(config.MAIL)
 								print('[INFO] Alert sent.')
 
@@ -281,7 +288,7 @@ def run():
 			cv2.putText(frame, text, (255, H - ((i * 20) + 60)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,0), 2)
 
 		# Initiate a simple log to save data at end of the day
-		if config.Log:
+		if args['log'] == True:
 			datetimee = [datetime.datetime.now()]
 			d = [datetimee, emptyEntry, emptyExit, x]
 			export_data = zip_longest(*d, fillvalue = '')
@@ -306,11 +313,11 @@ def run():
 		totalFrames += 1
 		fps.update()
 
-		if config.Timer:
+		if args['timer'] == True:
 			# Automatic timer to stop the live stream. Set to 8 hours (28800s).
 			t1 = time.time()
 			num_seconds=(t1-t0)
-			if num_seconds > 28800:
+			if num_seconds > args['time']:
 				break
 
 	# stop the timer and display FPS information
@@ -318,17 +325,15 @@ def run():
 	print('[INFO] elapsed time: {:.2f}'.format(fps.elapsed()))
 	print('[INFO] approx. FPS: {:.2f}'.format(fps.fps()))
 
-	if config.Thread:
+	if args['threading'] == True:
 		vs.release()
 
 	cv2.destroyAllWindows()
 
 
 if config.Scheduler:
-	# Example: schedule.every(5).seconds.do(run)
-    # ^^^^ Runs for every 5 second ^^^^
-	# Runs at every day (9:00 am). Can be changed.
-	schedule.every().day.at('9:00').do(run)
+	# Runs everyday at 9:00AM. Can be changed.
+	schedule.every().day.at(config.SCHEDULING_TIME).do(run)
 	while 1:
 		schedule.run_pending()
 else:
