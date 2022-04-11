@@ -1,5 +1,5 @@
 # To recieve real-time email alerts. Eg: 'name@gmail.com'
-MAIL = 'carishmashukla28@gmail.com'
+MAIL = ''
 
 # Enter IP camera url (Eg: url = 'http://191.138.0.100:8040/video'). 
 # Set to 0 for webcam.
