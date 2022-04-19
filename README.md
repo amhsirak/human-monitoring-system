@@ -23,7 +23,7 @@ Real-time human detection, tracking and counting using MobileNet SSD and Centroi
 - **Simple Log Maintainer:** Logs all data at end of the day with information including time and number of people.
 - **Threading:** Removes OpenCV's internal buffer and thus reduces lag/increases fps in real-time stream.
 
-All these features can be easily turned on/off in `mylib/config.py`file.
+All these features can be easily turned on/off in `lib/config.py`file.
 
 ## Screenshots
 
