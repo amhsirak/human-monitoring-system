@@ -58,7 +58,7 @@ python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mob
 - Fork the repository
 - Clone the repository 
 ```
-git clone https://github.com/karishmashuklaa/human-monitoring-system.git
+git clone https://github.com/amhsirak/human-monitoring-system.git
 ```
 
 
